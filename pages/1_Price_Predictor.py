@@ -4,6 +4,7 @@ import numpy as np
 import os
 import pickle
 import requests
+import joblib
 
 
 st.set_page_config(page_title="Price Predictor")
