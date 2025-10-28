@@ -1,42 +1,52 @@
 import streamlit as st
-import pickle
 import pandas as pd
 import numpy as np
 import os
+import pickle
+import requests
 
 
 st.set_page_config(page_title="Price Predictor")
 st.title("Price Predictor")
-# Determine base directory (project root)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # pages/.. = project root
 
 # -------------------------------
 # Relative paths to your models
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # pages/.. = project root
 df_path = os.path.join(BASE_DIR, "Models", "df.pkl")
 pipeline_path = os.path.join(BASE_DIR, "Models", "pipeline.pkl")
 
 # -------------------------------
-# Check that pipeline.pkl exists
+# Google Drive File ID
+DRIVE_FILE_ID = "1OHNfvc8cl6fERp9u7xv6f7nUuChUJt5s"  # Google Drive file ID
+
+# Function to download model from Google Drive
+def download_from_drive(file_id, save_path):
+    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    response = requests.get(download_url)
+    if response.status_code == 200:
+        with open(save_path, 'wb') as f:
+            f.write(response.content)
+        st.success(f"Model downloaded successfully to {save_path}")
+    else:
+        st.error("Failed to download the model from Google Drive.")
+        return None
+
+# -------------------------------
+# Check if model file exists, if not download it
 if not os.path.exists(pipeline_path):
-    st.error(
-        "pipeline.pkl is missing! ⚠️\n\n"
-        "Streamlit Cloud cannot automatically download large files from Google Drive.\n"
-        "Please upload `pipeline.pkl` to your repo in `Models/` folder."
-    )
-    st.stop()  # Stop the app here because pipeline.pkl is required
+    st.info("Downloading pipeline model from Google Drive…")
+    download_from_drive(DRIVE_FILE_ID, pipeline_path)
 
 # -------------------------------
 # Load df.pkl
-if not os.path.exists(df_path):
-    st.error("df.pkl is missing in Models folder!")
-    st.stop()
-
 with open(df_path, "rb") as file:
     df = pickle.load(file)
 
+# -------------------------------
 # Load pipeline.pkl
 with open(pipeline_path, "rb") as file:
     pipeline = pickle.load(file)
+
 #st.dataframe(df)
 
 st.header("Enter Your Input")
