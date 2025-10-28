@@ -12,7 +12,7 @@ st.set_page_config(page_title="Home", layout="wide")
 # ⚙️ Optional: Load ML Model (if needed)
 # -------------------------------
 MODEL_PATH = "pipeline.pkl"
-DRIVE_FILE_ID = "https://drive.google.com/file/d/10bbMLeMF8HmdkQjzdrhwzXEANYoh0uh4/view?usp=sharing"  # Replace with actual ID if used
+DRIVE_FILE_ID = "10bbMLeMF8HmdkQjzdrhwzXEANYoh0uh4"  # Replace with actual ID if used
 
 @st.cache_resource
 def load_model():
