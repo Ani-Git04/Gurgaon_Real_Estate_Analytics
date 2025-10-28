@@ -1,27 +1,62 @@
 import streamlit as st
+import os
+import pickle
+import gdown
 
-# Page config
+# -------------------------------
+# 🔧 Page Configuration
+# -------------------------------
 st.set_page_config(page_title="Home", layout="wide")
 
-# Main title
+# -------------------------------
+# ⚙️ Optional: Load ML Model (if needed)
+# -------------------------------
+MODEL_PATH = "pipeline.pkl"
+DRIVE_FILE_ID = "https://drive.google.com/file/d/10bbMLeMF8HmdkQjzdrhwzXEANYoh0uh4/view?usp=sharing"  # Replace with actual ID if used
+
+@st.cache_resource
+def load_model():
+    """Download and load the ML pipeline (only if needed)."""
+    if not os.path.exists(MODEL_PATH):
+        # Uncomment the next line once you have your model on Google Drive
+        # gdown.download(f"https://drive.google.com/uc?export=download&id={DRIVE_FILE_ID}", MODEL_PATH)
+        pass
+    if os.path.exists(MODEL_PATH):
+        with open(MODEL_PATH, "rb") as f:
+            model = pickle.load(f)
+        return model
+    return None
+
+# Optional: load model (comment out if not used on home page)
+# model = load_model()
+
+# -------------------------------
+# 🏡 Main Page
+# -------------------------------
 st.title("🏡 Welcome to Apartment Finder")
 
-# Subtitle / intro
 st.write(
     """
     This platform helps you:
     - 📊 **Analyze** apartment price trends  
     - 🤖 **Predict** apartment prices  
-    - 🏢 **Recommend** the best options for you
+    - 🏢 **Recommend** the best options for you  
 
     Use the sidebar to navigate to different sections of the app.
     """
 )
 
-# Optional: Add a nice banner image
-st.image("https://images.unsplash.com/photo-1568605114967-8130f3a36994", use_column_width=True)
+# -------------------------------
+# 🖼️ Banner Image
+# -------------------------------
+st.image(
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
+    use_column_width=True
+)
 
-# Add three columns with feature highlights
+# -------------------------------
+# 💡 Feature Highlights
+# -------------------------------
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -36,6 +71,21 @@ with col3:
     st.subheader("🏠 Recommend Apartment")
     st.write("Get personalized apartment recommendations based on your preferences.")
 
-# Add a simple CTA button
+# -------------------------------
+# 🚀 Call to Action
+# -------------------------------
 if st.button("👉 Get Started"):
     st.sidebar.success("Select a page from the sidebar!")
+
+# -------------------------------
+# 📘 Footer (optional)
+# -------------------------------
+st.markdown(
+    """
+    <hr>
+    <center>
+    Built with ❤️ using Streamlit
+    </center>
+    """,
+    unsafe_allow_html=True
+)
