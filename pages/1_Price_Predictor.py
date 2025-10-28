@@ -3,11 +3,10 @@ import pickle
 import pandas as pd
 import numpy as np
 import os
-import gdown
+
 
 st.set_page_config(page_title="Price Predictor")
 st.title("Price Predictor")
-# -------------------------------
 # Determine base directory (project root)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # pages/.. = project root
 
@@ -17,25 +16,27 @@ df_path = os.path.join(BASE_DIR, "Models", "df.pkl")
 pipeline_path = os.path.join(BASE_DIR, "Models", "pipeline.pkl")
 
 # -------------------------------
-# Download pipeline.pkl from Google Drive if missing
-DRIVE_FILE_ID = "10bbMLeMF8HmdkQjzdrhwzXEANYoh0uh4"  # your Google Drive file ID
+# Check that pipeline.pkl exists
 if not os.path.exists(pipeline_path):
-    st.info("Downloading pipeline model from Google Drive…")
-    gdown.download(
-        f"https://drive.google.com/uc?export=download&id={DRIVE_FILE_ID}",
-        pipeline_path,
-        quiet=False
+    st.error(
+        "pipeline.pkl is missing! ⚠️\n\n"
+        "Streamlit Cloud cannot automatically download large files from Google Drive.\n"
+        "Please upload `pipeline.pkl` to your repo in `Models/` folder."
     )
+    st.stop()  # Stop the app here because pipeline.pkl is required
 
 # -------------------------------
 # Load df.pkl
+if not os.path.exists(df_path):
+    st.error("df.pkl is missing in Models folder!")
+    st.stop()
+
 with open(df_path, "rb") as file:
     df = pickle.load(file)
 
 # Load pipeline.pkl
 with open(pipeline_path, "rb") as file:
     pipeline = pickle.load(file)
-
 #st.dataframe(df)
 
 st.header("Enter Your Input")
