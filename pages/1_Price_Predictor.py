@@ -2,14 +2,34 @@ import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
+import os
 
 st.set_page_config(page_title="Price Predictor")
 st.title("Price Predictor")
+# --- Determine project root ---
+try:
+    BASE_DIR = os.path.dirname(__file__)  # when running with streamlit run
+except NameError:
+    BASE_DIR = os.getcwd()  # fallback for PyCharm run
 
-with open("/Users/anilsaini/PycharmProjects/PythonProject/real-estate/Models/df.pkl", "rb") as file:
+# --- Models folder path ---
+MODELS_DIR = os.path.join(BASE_DIR, "..", "Models")  # pages/.. = project root
+
+# --- Full paths ---
+df_path = os.path.join(MODELS_DIR, "df.pkl")
+pipeline_path = os.path.join(MODELS_DIR, "pipeline.pkl")
+
+# --- Check files exist ---
+if not os.path.exists(df_path):
+    st.error(f"df.pkl not found at {df_path}")
+if not os.path.exists(pipeline_path):
+    st.error(f"pipeline.pkl not found at {pipeline_path}")
+
+# --- Load pickle files ---
+with open(df_path, "rb") as file:
     df = pickle.load(file)
 
-with open("/Users/anilsaini/PycharmProjects/PythonProject/real-estate/Models/pipeline.pkl", "rb") as file:
+with open(pipeline_path, "rb") as file:
     pipeline = pickle.load(file)
 
 #st.dataframe(df)
