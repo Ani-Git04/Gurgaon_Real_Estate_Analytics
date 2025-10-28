@@ -51,7 +51,7 @@ st.write(
 # -------------------------------
 st.image(
     "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
-    use_column_width=True
+    use_container_width=True
 )
 
 # -------------------------------
