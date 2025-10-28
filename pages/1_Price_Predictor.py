@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import pickle
-import gdown
+import requests
 
 
 st.set_page_config(page_title="Price Predictor")
@@ -11,20 +11,31 @@ st.title("Price Predictor")
 
 # -------------------------------
 # Relative paths to your models
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # Project root
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # pages/.. = project root
 df_path = os.path.join(BASE_DIR, "Models", "df.pkl")
-pipeline_path = os.path.join(BASE_DIR, "Models", "pipeline_compressed.pkl")
 
 # -------------------------------
-# Download pipeline_compressed.pkl from Google Drive if missing
-DRIVE_FILE_ID = "1OHNfvc8cl6fERp9u7xv6f7nUuChUJt5s"  # your Google Drive file ID
+# Google Drive File ID
+DRIVE_FILE_ID = "1vPsufC5jpYpqfbwBIaAhrT2fmF9EYxjz"  # Replace with the new Google Drive file ID
+
+# Function to download model from Google Drive
+def download_from_drive(file_id, save_path):
+    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    response = requests.get(download_url)
+    if response.status_code == 200:
+        with open(save_path, 'wb') as f:
+            f.write(response.content)
+        st.success(f"Model downloaded successfully to {save_path}")
+    else:
+        st.error("Failed to download the model from Google Drive.")
+        return None
+
+# -------------------------------
+# Check if model file exists, if not download it
+pipeline_path = os.path.join(BASE_DIR, "Models", "pipeline_compressed.pkl")
 if not os.path.exists(pipeline_path):
     st.info("Downloading pipeline model from Google Drive…")
-    gdown.download(
-        f"https://drive.google.com/uc?export=download&id={DRIVE_FILE_ID}",
-        pipeline_path,
-        quiet=False
-    )
+    download_from_drive(DRIVE_FILE_ID, pipeline_path)
 
 # -------------------------------
 # Load df.pkl
@@ -32,10 +43,10 @@ with open(df_path, "rb") as file:
     df = pickle.load(file)
 
 # -------------------------------
-# Load pipeline_compressed.pkl
+# Load pipeline_compressed model
 with open(pipeline_path, "rb") as file:
-    pipeline = pickle.load(file)
-#st.dataframe(df)
+    pipeline = joblib.load(file)  # Use joblib for compressed models
+
 
 st.header("Enter Your Input")
 
