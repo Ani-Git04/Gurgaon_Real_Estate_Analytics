@@ -7,12 +7,19 @@ import os
 st.set_page_config(page_title="Price Predictor")
 st.title("Price Predictor")
 
-with open("/Users/anilsaini/PycharmProjects/PythonProject/real-estate/Models/df.pkl", "rb") as file:
+# Determine base directory (project root)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # pages/.. = project root
+
+# Relative paths to your models
+df_path = os.path.join(BASE_DIR, "Models", "df.pkl")
+pipeline_path = os.path.join(BASE_DIR, "Models", "pipeline.pkl")
+
+# Load files
+with open(df_path, "rb") as file:
     df = pickle.load(file)
 
-with open("/Users/anilsaini/PycharmProjects/PythonProject/real-estate/Models/pipeline.pkl", "rb") as file:
+with open(pipeline_path, "rb") as file:
     pipeline = pickle.load(file)
-
 #st.dataframe(df)
 
 st.header("Enter Your Input")
